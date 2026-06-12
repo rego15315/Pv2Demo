@@ -40,6 +40,9 @@
   /* Typography */
   --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+  
+  /* Mobile sidebar overlay */
+  --sidebar-overlay-bg: rgba(0, 0, 0, 0.5);
 }
 
 /* Light Theme */
@@ -80,6 +83,7 @@ body {
   line-height: 1.5;
   overflow: hidden;
   height: 100vh;
+  transition: background var(--transition-base), color var(--transition-base);
 }
 
 /* ==================== Layout ==================== */
@@ -323,6 +327,11 @@ body {
 .topbar-btn:hover {
   background: var(--bg-card-hover);
   color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.topbar-btn:active {
+  transform: scale(0.95);
 }
 
 .sun-icon { display: none; }
@@ -384,6 +393,7 @@ body {
 .card:hover {
   border-color: var(--border-hover);
   background: var(--bg-card-hover);
+  transform: translateY(-1px);
 }
 
 .card-header {
@@ -643,11 +653,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .task-input button:hover {
   opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.task-input button:active {
+  transform: scale(0.95);
 }
 
 .task-list {
@@ -799,6 +814,11 @@ body {
 .stat-controls button:hover {
   border-color: var(--accent-start);
   color: var(--text-primary);
+  transform: scale(1.05);
+}
+
+.stat-controls button:active {
+  transform: scale(0.95);
 }
 
 .stat-controls input {
@@ -894,6 +914,11 @@ body {
 .timer-controls button:hover:not(:disabled) {
   border-color: var(--accent-start);
   background: var(--bg-card-hover);
+  transform: scale(1.03);
+}
+
+.timer-controls button:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .timer-controls button:disabled {
@@ -909,6 +934,11 @@ body {
 
 .btn-start:hover:not(:disabled) {
   opacity: 0.9;
+  transform: scale(1.03);
+}
+
+.btn-start:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .pomo-counter {
@@ -964,11 +994,16 @@ body {
   font-size: 0.85rem;
   cursor: pointer;
   font-weight: 500;
-  transition: opacity var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .notes-controls button:hover {
   opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.notes-controls button:active {
+  transform: scale(0.95);
 }
 
 .notes-body {
@@ -1142,6 +1177,11 @@ body {
 
 .note-actions button:hover {
   border-color: var(--accent-start);
+  transform: scale(1.02);
+}
+
+.note-actions button:active {
+  transform: scale(0.98);
 }
 
 .note-actions .btn-danger:hover {
@@ -1181,6 +1221,11 @@ body {
 .calendar-nav button:hover {
   border-color: var(--accent-start);
   color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.calendar-nav button:active {
+  transform: scale(0.9);
 }
 
 .calendar-nav span {
@@ -1299,6 +1344,16 @@ body {
   font-size: 0.85rem;
   cursor: pointer;
   font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.event-input button:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.event-input button:active {
+  transform: scale(0.95);
 }
 
 .event-list {
@@ -1356,6 +1411,15 @@ body {
   transition: all var(--transition-fast);
   font-weight: 500;
   font-family: var(--font-sans);
+}
+
+.toggle-btn:hover {
+  background: var(--bg-card-hover);
+  transform: scale(1.05);
+}
+
+.toggle-btn:active {
+  transform: scale(0.95);
 }
 
 .toggle-btn.active {
@@ -1555,11 +1619,28 @@ canvas {
   box-shadow: 0 2px 6px rgba(167, 139, 250, 0.4);
 }
 
+/* ==================== Sidebar Overlay (Mobile) ==================== */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--sidebar-overlay-bg);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* ==================== Responsive ==================== */
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
     transition: transform var(--transition-base);
+    z-index: 200;
   }
   
   .sidebar.mobile-open {
