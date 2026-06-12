@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Dashboard · 个人每日仪表盘</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: rgba(255,255,255,0.04);
+    --surface-2: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.08);
+    --text: #e6e8eb;
+    --text-secondary: #9aa0a6;
+    --accent: linear-gradient(135deg, #a78bfa, #60a5fa);
+    --accent-2: linear-gradient(135deg, #60a5fa, #34d399);
+    --accent-3: linear-gradient(135deg, #f472b6, #a78bfa);
+    --accent-4: linear-gradient(135deg, #fbbf24, #f472b6);
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    --radius: 20px;
+    --transition: 0.35s cubic-bezier(.2,.8,.2,1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    min-height: 100%;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: radial-gradient(circle at 10% -10%, rgba(99,102,241,0.25), transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(236,72,153,0.18), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(14,165,233,0.18), transparent 40%),
+                var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .brand {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    backdrop-filter: blur(10px);
+  }
+  .hero {
+    margin: 28px 0 34px;
+    padding: 34px;
+    border-radius: var(--radius);
+    background: linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 0%,rgba(167,139,250,0.25), transparent 60%);
+    opacity: 0.9;
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 38px;
+    line-height: 1.1;
+    margin: 4px 0 8px;
+    background: linear-gradient(180deg,#fff,#cbd5e1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .meta {
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  .quote {
+    margin-top: 14px;
+    padding: 12px 14px;
+    display: inline-block;
+    border-left: 3px solid #a78bfa;
+    background: rgba(167,139,250,0.08);
+    border-radius: 0 12px 12px 0;
+    color: #cdd6f4;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+    gap: 18px;
+  }
+  .col-3 { grid-column: span 3; }
+  .col-4 { grid-column: span 4; }
+  .col-6 { grid-column: span 6; }
+  .col-7 { grid-column: span 7; }
+  .col-5 { grid-column: span 5; }
+  .col-12 { grid-column: span 12; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.14);
+  }
+  .card-h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  .value {
+    font-size: 34px;
+    font-weight: 700;
+    background: linear-gradient(180deg,#fff,#94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .sub {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 10px rgba(52,211,153,0.5);
+  }
+  .task {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    margin: 8px 0;
+    cursor: pointer;
+    transition: 0.25s ease;
+  }
+  .task:hover { background: rgba(255,255,255,0.08); }
+  .task.done .task-text { color: var(--text-secondary); text-decoration: line-through; }
+  .checkbox {
+    width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.2);
+    display: inline-grid; place-items: center; flex-shrink: 0;
+  }
+  .task.done .checkbox {
+    background: linear-gradient(135deg,#a78bfa,#60a5fa);
+    border-color: transparent;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 14px;
+  }
+  .progress {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 14px;
+  }
+  .progress > b {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--accent);
+    width: 68%;
+  }
+  .grid-tools {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 14px;
+  }
+  .tool {
+    display: grid;
+    place-items: center;
+    padding: 22px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-align: center;
+    gap: 10px;
+    transition: var(--transition);
+  }
+  .tool:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-2px);
+  }
+  footer {
+    margin-top: 34px;
+    padding: 22px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+  }
+  .fade-in { animation: fadeIn 0.7s ease both; }
+  .fade-in:nth-child(2) { animation-delay: 0.1s; }
+  .fade-in:nth-child(3) { animation-delay: 0.2s; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 900px) {
+    .col-3, .col-4, .col-5, .col-6, .col-7 { grid-column: span 6; }
+    .stat-row, .grid-tools { grid-template-columns: repeat(2,1fr); }
+    .hero h1 { font-size: 28px; }
+  }
+  @media (max-width: 560px) {
+    .col-3, .col-4, .col-5, .col-6, .col-7 { grid-column: span 12; }
+    .stat-row, .grid-tools { grid-template-columns: 1fr; }
+    header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">⚡ Daily Dashboard</div>
+    <div class="pill"><span class="dot"></span> 系统正常</div>
+  </header>
+
+  <div class="hero fade-in">
+    <div class="meta" id="datetime">加载中...</div>
+    <h1>早上好，准备好迎接今天了吗？</h1>
+    <p class="meta" style="color:#9aa0a6">保持专注，保持高效。</p>
+    <div class="quote" id="quote">加载中...</div>
+  </div>
+
+  <div class="grid">
+    <!-- 天气 -->
+    <div class="card col-4 fade-in">
+      <div class="card-h"><span class="card-title">今日天气</span><span class="pill">金边</span></div>
+      <div class="value">33°C</div>
+      <div class="sub">体感 37°C · 湿度 50% · 零星小雨</div>
+      <div class="sub" style="margin-top:6px">UV 指数 11 · 北风 12 km/h</div>
+    </div>
+
+    <!-- 任务 -->
+    <div class="card col-8 fade-in">
+      <div class="card-h"><span class="card-title">今日重点任务</span><span class="pill">5 项</span></div>
+      <div class="task" onclick="toggle(this)">
+        <span class="checkbox">✓</span>
+        <span class="task-text">完成上午核心模块重构</span>
+      </div>
+      <div class="task" onclick="toggle(this)">
+        <span class="checkbox">✓</span>
+        <span class="task-text">回复客户反馈邮件</span>
+      </div>
+      <div class="task" onclick="toggle(this)">
+        <span class="checkbox">✓</span>
+        <span class="task-text">阅读技术文档 30 分钟</span>
+      </div>
+      <div class="task" onclick="toggle(this)">
+        <span class="checkbox">✓</span>
+        <span class="task-text">身体锻炼 45 分钟</span>
+      </div>
+      <div class="task" onclick="toggle(this)">
+        <span class="checkbox">✓</span>
+        <span class="task-text">整理明日待办清单</span>
+      </div>
+    </div>
+
+    <!-- 统计 -->
+    <div class="col-12">
+      <div class="stat-row fade-in">
+        <div class="card">
+          <div class="card-title">今日步数</div>
+          <div class="value">8,432</div>
+          <div class="sub">目标 10,000 步</div>
+          <div class="progress"><b style="width:84%"></b></div>
+        </div>
+        <div class="card">
+          <div class="card-title">饮水量</div>
+          <div class="value">1,250<span style="font-size:16px;color:#9aa0a6">ml</span></div>
+          <div class="sub">目标 2,000 ml</div>
+          <div class="progress"><b style="width:62%"></b></div>
+        </div>
+        <div class="card">
+          <div class="card-title">专注时长</div>
+          <div class="value">4.5<span style="font-size:16px;color:#9aa0a6">h</span></div>
+          <div class="sub">今日累计专注</div>
+          <div class="progress"><b style="width:75%"></b></div>
+        </div>
+        <div class="card">
+          <div class="card-title">睡眠时间</div>
+          <div class="value">6.5<span style="font-size:16px;color:#9aa0a6">h</span></div>
+          <div class="sub">建议 7~8 小时</div>
+          <div class="progress"><b style="width:81%"></b></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 灵感 -->
+    <div class="card col-7 fade-in">
+      <div class="card-h"><span class="card-title">今日灵感</span></div>
+      <div id="insight" style="color:#cdd6f4;font-size:15px;line-height:1.6">加载中...</div>
+    </div>
+
+    <!-- 进度 -->
+    <div class="card col-5 fade-in">
+      <div class="card-h"><span class="card-title">进度追踪</span></div>
+      <div class="sub">周目标进度</div>
+      <div class="progress"><b style="width:68%"></b></div>
+      <div class="sub" style="margin-top:14px">学习进度</div>
+      <div class="progress"><b style="width:45%"></b></div>
+      <div class="sub" style="margin-top:14px">阅读进度</div>
+      <div class="progress"><b style="width:30%"></b></div>
+    </div>
+
+    <!-- 工具 -->
+    <div class="col-12">
+      <div class="grid-tools fade-in">
+        <div class="tool">
+          <div style="font-size:28px">🧮</div>
+          <div><div style="font-weight:600">计算器</div><div style="font-size:12px;color:#9aa0a6">快速运算</div></div>
+        </div>
+        <div class="tool">
+          <div style="font-size:28px">🍅</div>
+          <div><div style="font-weight:600">番茄钟</div><div style="font-size:12px;color:#9aa0a6">专注计时</div></div>
+        </div>
+        <div class="tool">
+          <div style="font-size:28px">📝</div>
+          <div><div style="font-weight:600">记事本</div><div style="font-size:12px;color:#9aa0a6">随手记录</div></div>
+        </div>
+        <div class="tool">
+          <div style="font-size:28px">📅</div>
+          <div><div style="font-weight:600">日历</div><div style="font-size:12px;color:#9aa0a6">日程管理</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>© <span id="year"></span> Daily Dashboard</div>
+    <div style="display:flex;gap:12px">
+      <a href="#" style="color:#9aa0a6;text-decoration:none">GitHub</a>
+      <a href="#" style="color:#9aa0a6;text-decoration:none">Twitter</a>
+      <a href="#" style="color:#9aa0a6;text-decoration:none">Email</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // 时间
+  const now = new Date();
+  const opts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long', hour: '2-digit', minute
