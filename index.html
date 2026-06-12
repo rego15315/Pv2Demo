@@ -1,290 +1,206 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personal Dashboard</title>
+<meta name="description" content="Personal Dashboard - 个人生产力仪表盘">
+<title>Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 <link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked@11.1.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.0/marked.min.js" defer></script>
 </head>
 <body>
-<header>
-  <div class="logo">⚡ Personal Dashboard</div>
-  <div class="header-right">
-    <div class="status" id="api-status"><span class="dot"></span> 加载中...</div>
-    <div class="clock" id="clock">--</div>
-    <button class="settings-btn" id="settings-btn" title="设置">⚙️</button>
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span>Dashboard</span>
+    </div>
+    <button class="sidebar-collapse" id="sidebar-toggle" aria-label="Toggle sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
   </div>
-</header>
+  <div class="sidebar-nav">
+    <a href="#" class="nav-item active" data-view="dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>总览</span></a>
+    <a href="#" class="nav-item" data-view="tasks"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span>任务</span></a>
+    <a href="#" class="nav-item" data-view="pomodoro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>番茄钟</span></a>
+    <a href="#" class="nav-item" data-view="notes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg><span>笔记</span></a>
+    <a href="#" class="nav-item" data-view="calendar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>日历</span></a>
+    <a href="#" class="nav-item" data-view="stats"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>统计</span></a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="#" class="nav-item" id="settings-nav"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>设置</span></a>
+  </div>
+</nav>
 
-<div class="main-container">
-  <!-- 第一行：问候 + 天气 -->
-  <section class="row-1">
-    <div class="card hero-card" id="hero-card">
-      <div class="greeting-section">
-        <div class="date-display" id="date-display">--</div>
-        <h1 id="greeting">加载中...</h1>
-        <p>保持专注，保持高效。</p>
-        <div class="quote-box" id="quote-box">
-          <span class="quote-icon">💡</span>
-          <span class="quote-text" id="quote-text">加载中...</span>
-          <button class="refresh-quote" id="refresh-quote" title="换一条">🔄</button>
-        </div>
+<!-- Main Layout -->
+<div class="main-layout" id="main-layout">
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="搜索..." id="global-search" autocomplete="off">
       </div>
     </div>
-    <div class="card weather-card" id="weather-card">
-      <div class="card-title">
-        <span>🌤️ 今日天气</span>
-        <button class="location-btn" id="location-btn" title="获取位置">📍</button>
-      </div>
-      <div class="weather-content" id="weather-content">
-        <div class="weather-loading">获取天气中...</div>
-      </div>
-      <div class="weather-error" id="weather-error"></div>
-      <div class="manual-city" id="manual-city" style="display:none">
-        <input type="text" id="city-input" placeholder="输入城市名称">
-        <button id="city-search">查询</button>
-      </div>
+    <div class="topbar-right">
+      <div class="topbar-widget" id="weather-widget"><span class="weather-icon" id="topbar-weather-icon">--</span><span class="weather-temp" id="topbar-weather-temp">--°</span></div>
+      <div class="topbar-clock" id="topbar-clock">--:--</div>
+      <button class="topbar-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <button class="topbar-btn" id="settings-btn" aria-label="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
     </div>
-  </section>
+  </header>
 
-  <!-- 待办事项 -->
-  <section class="todo-section">
-    <div class="card full-width">
-      <div class="card-title">
-        <span>📋 今日重点</span>
-        <div class="todo-stats">
-          <span id="todo-count">0/0</span>
-          <span class="todo-percent" id="todo-percent">0%</span>
-        </div>
-      </div>
-      <div class="todo-input-area">
-        <input type="text" id="todo-input" placeholder="添加新任务...">
-        <button id="add-todo">+</button>
-      </div>
-      <div class="todo-list" id="todo-list"></div>
-    </div>
-  </section>
-
-  <!-- 健康统计卡片 -->
-  <section class="stats-section" id="stats-section">
-    <div class="stat-card water-card">
-      <div class="card-title">💧 饮水量</div>
-      <div class="stat-value" id="water-value">0 ML</div>
-      <div class="stat-target">目标: 2000 ML</div>
-      <div class="progress-bar"><div class="progress-fill" id="water-progress" style="width:0%"></div></div>
-      <div class="stat-controls">
-        <button data-action="add-water" data-amount="250">+250ML</button>
-        <button data-action="add-water" data-amount="500">+500ML</button>
-        <button data-action="reset-water">重置</button>
-      </div>
-    </div>
-    <div class="stat-card steps-card">
-      <div class="card-title">👟 今日步数</div>
-      <div class="stat-value" id="steps-value">0</div>
-      <div class="stat-target">目标: 10,000</div>
-      <div class="progress-bar"><div class="progress-fill" id="steps-progress" style="width:0%"></div></div>
-      <div class="stat-controls">
-        <input type="number" id="steps-input" placeholder="输入步数">
-        <button data-action="add-steps">记录</button>
-        <button data-action="reset-steps">重置</button>
-      </div>
-    </div>
-    <div class="stat-card focus-card">
-      <div class="card-title">🎯 专注时长</div>
-      <div class="stat-value" id="focus-value">0h 0m</div>
-      <div class="stat-target">今日累计</div>
-      <div class="progress-bar"><div class="progress-fill" id="focus-progress" style="width:0%"></div></div>
-      <div class="stat-controls">
-        <span id="focus-source">来源: 番茄钟</span>
-      </div>
-    </div>
-    <div class="stat-card sleep-card">
-      <div class="card-title">🌙 睡眠</div>
-      <div class="stat-value" id="sleep-value">0h 0m</div>
-      <div class="stat-target">建议 7~8 小时</div>
-      <div class="progress-bar"><div class="progress-fill" id="sleep-progress" style="width:0%"></div></div>
-      <div class="stat-controls">
-        <input type="time" id="sleep-input">
-        <button data-action="add-sleep">记录</button>
-        <button data-action="reset-sleep">重置</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 图表区域 -->
-  <section class="charts-section" id="charts-section">
-    <div class="card chart-card">
-      <div class="card-title">
-        <span>📊 饮水趋势</span>
-        <div class="chart-toggle">
-          <button class="toggle-btn active" data-range="day">日</button>
-          <button class="toggle-btn" data-range="week">周</button>
-          <button class="toggle-btn" data-range="month">月</button>
-        </div>
-      </div>
-      <canvas id="water-chart"></canvas>
-    </div>
-    <div class="card chart-card">
-      <div class="card-title">
-        <span>📚 学习时长趋势</span>
-        <div class="chart-toggle">
-          <button class="toggle-btn active" data-range="day">日</button>
-          <button class="toggle-btn" data-range="week">周</button>
-          <button class="toggle-btn" data-range="month">月</button>
-        </div>
-      </div>
-      <canvas id="focus-chart"></canvas>
-    </div>
-    <div class="card chart-card">
-      <div class="card-title">
-        <span>😴 睡眠趋势</span>
-        <div class="chart-toggle">
-          <button class="toggle-btn active" data-range="day">日</button>
-          <button class="toggle-btn" data-range="week">周</button>
-          <button class="toggle-btn" data-range="month">月</button>
-        </div>
-      </div>
-      <canvas id="sleep-chart"></canvas>
-    </div>
-    <div class="card chart-card">
-      <div class="card-title">
-        <span>✅ 任务完成率趋势</span>
-        <div class="chart-toggle">
-          <button class="toggle-btn active" data-range="day">日</button>
-          <button class="toggle-btn" data-range="week">周</button>
-          <button class="toggle-btn" data-range="month">月</button>
-        </div>
-      </div>
-      <canvas id="todo-chart"></canvas>
-    </div>
-  </section>
-
-  <!-- 工具区域 -->
-  <section class="tools-section">
-    <!-- 番茄钟 -->
-    <div class="card tool-card" id="pomodoro-card">
-      <div class="card-title">
-        <span>🍅 番茄钟</span>
-        <div class="pomo-settings">
-          <label>专注: <input type="number" id="pomo-focus" value="25" min="1"> min</label>
-          <label>休息: <input type="number" id="pomo-break" value="5" min="1"> min</label>
-        </div>
-      </div>
-      <div class="pomodoro-content">
-        <div class="timer-display" id="timer-display">25:00</div>
-        <div class="timer-label" id="timer-label">准备开始</div>
-        <div class="timer-controls">
-          <button class="start-btn" id="start-pomo">开始</button>
-          <button class="pause-btn" id="pause-pomo" disabled>暂停</button>
-          <button class="reset-btn" id="reset-pomo">重置</button>
-        </div>
-        <div class="pomodoro-count">
-          <span>已完成: <strong id="pomo-count">0</strong> 个番茄</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 记事本 -->
-    <div class="card tool-card notebook-card" id="notebook-card">
-      <div class="card-title">
-        <span>📝 记事本</span>
-        <div class="notebook-controls-top">
-          <input type="text" id="note-search" placeholder="搜索笔记...">
-          <button id="new-note">新建</button>
-        </div>
-      </div>
-      <div class="notebook-content">
-        <div class="note-list" id="note-list"></div>
-        <div class="note-editor">
-          <input type="text" id="note-title" placeholder="笔记标题">
-          <div class="note-tabs">
-            <button class="note-tab active" data-tab="edit">编辑</button>
-            <button class="note-tab" data-tab="preview">预览</button>
+  <!-- Content -->
+  <main class="content-area" id="content-area">
+    <!-- ====== Dashboard View ====== -->
+    <div class="view active" id="view-dashboard">
+      <section class="section">
+        <div class="card greeting-card">
+          <div class="greeting-left">
+            <div class="greeting-date" id="greeting-date">--</div>
+            <h1 class="greeting-text" id="greeting-text">早上好</h1>
+            <p class="greeting-subtitle">保持专注，保持高效。</p>
           </div>
-          <textarea id="note-content" placeholder="使用 Markdown 书写..."></textarea>
-          <div class="note-preview" id="note-preview"></div>
-          <div class="note-actions">
-            <button id="save-note">保存</button>
-            <button id="delete-note" class="danger">删除</button>
+          <div class="greeting-quote" id="greeting-quote">
+            <span class="quote-text">加载中...</span>
+            <button class="refresh-btn" id="refresh-quote" title="换一条">↻</button>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section class="section">
+        <div class="card weather-card" id="weather-card">
+          <div class="card-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 00-10 0"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="1" y1="22" x2="23" y2="22"/></svg><span>天气</span></div>
+          <div class="weather-content" id="weather-content"><div class="loading">获取中...</div></div>
+          <div class="weather-error" id="weather-error"></div>
+          <div class="city-search" id="city-search" style="display:none"><input type="text" id="city-input" placeholder="输入城市"><button id="city-search-btn">查询</button></div>
+        </div>
+        <div class="card quick-actions">
+          <div class="card-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>快捷操作</span></div>
+          <div class="quick-grid">
+            <div class="quick-item" data-view="pomodoro"><div class="quick-icon">🍅</div><div class="quick-label">番茄钟</div></div>
+            <div class="quick-item" data-view="notes"><div class="quick-icon">📝</div><div class="quick-label">笔记</div></div>
+            <div class="quick-item" data-view="calendar"><div class="quick-icon">📅</div><div class="quick-label">日历</div></div>
+            <div class="quick-item" data-view="stats"><div class="quick-icon">📊</div><div class="quick-label">统计</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card tasks-card full-width">
+          <div class="card-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span>今日任务</span><div class="task-stats"><span id="todo-count">0/0</span><span class="percent" id="todo-percent">0%</span></div></div>
+          <div class="task-input"><input type="text" id="todo-input" placeholder="添加新任务..."><button id="add-todo">+</button></div>
+          <div class="task-list" id="todo-list"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="card stat-card"><div class="card-header">💧 饮水</div><div class="stat-value" id="water-value">0 ML</div><div class="progress-bar"><div class="progress-fill" id="water-progress" style="width:0%"></div></div><div class="stat-controls"><button data-action="add-water" data-amount="250">+250</button><button data-action="add-water" data-amount="500">+500</button><button data-action="reset-water">重置</button></div></div>
+        <div class="card stat-card"><div class="card-header">👟 步数</div><div class="stat-value" id="steps-value">0</div><div class="progress-bar"><div class="progress-fill" id="steps-progress" style="width:0%"></div></div><div class="stat-controls"><input type="number" id="steps-input" placeholder="步数"><button data-action="add-steps">记录</button><button data-action="reset-steps">重置</button></div></div>
+        <div class="card stat-card"><div class="card-header">🎯 专注</div><div class="stat-value" id="focus-value">0h 0m</div><div class="progress-bar"><div class="progress-fill" id="focus-progress" style="width:0%"></div></div><div class="stat-controls"><span class="stat-source">来源: 番茄钟</span></div></div>
+        <div class="card stat-card"><div class="card-header">🌙 睡眠</div><div class="stat-value" id="sleep-value">0h 0m</div><div class="progress-bar"><div class="progress-fill" id="sleep-progress" style="width:0%"></div></div><div class="stat-controls"><input type="time" id="sleep-input"><button data-action="add-sleep">记录</button><button data-action="reset-sleep">重置</button></div></div>
+      </section>
+
+      <section class="section inspiration-section">
+        <div class="card inspiration-card">
+          <div class="card-header"><span>✨ 灵感</span><button class="refresh-btn" id="refresh-inspiration">↻</button></div>
+          <div class="inspiration-content"><div class="inspiration-category" id="inspiration-category">--</div><div class="inspiration-text" id="inspiration-text">加载中...</div></div>
+        </div>
+      </section>
     </div>
 
-    <!-- 日历 -->
-    <div class="card tool-card calendar-card" id="calendar-card">
-      <div class="card-title">
-        <span>📅 日历</span>
-        <div class="calendar-nav">
-          <button id="prev-month">◀</button>
-          <span id="calendar-month-year"></span>
-          <button id="next-month">▶</button>
+    <!-- ====== Tasks View ====== -->
+    <div class="view" id="view-tasks">
+      <section class="section">
+        <div class="card full-width">
+          <div class="card-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span>所有任务</span><div class="task-stats"><span id="todo-count-2">0/0</span><span class="percent" id="todo-percent-2">0%</span></div></div>
+          <div class="task-input"><input type="text" id="todo-input-2" placeholder="添加新任务..."><button id="add-todo-2">+</button></div>
+          <div class="task-list" id="todo-list-2"></div>
         </div>
-      </div>
-      <div class="calendar-content">
-        <div class="calendar-header">
-          <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
-        </div>
-        <div class="calendar-grid" id="calendar-grid"></div>
-      </div>
-      <div class="event-input-area" id="event-input-area" style="display:none">
-        <p>选择日期: <strong id="selected-date"></strong></p>
-        <input type="text" id="event-input" placeholder="添加日程...">
-        <button id="add-event">添加</button>
-        <div id="event-list"></div>
-      </div>
+      </section>
     </div>
 
-    <!-- 灵感 -->
-    <div class="card tool-card" id="inspiration-card">
-      <div class="card-title"><span>✨ 灵感库</span><button id="refresh-inspiration" title="换一条">🔄</button></div>
-      <div class="inspiration-content" id="inspiration-content">
-        <div class="inspiration-category" id="inspiration-category">--</div>
-        <div class="inspiration-text" id="inspiration-text">加载中...</div>
-      </div>
+    <!-- ====== Pomodoro View ====== -->
+    <div class="view" id="view-pomodoro">
+      <section class="section">
+        <div class="card pomodoro-card">
+          <div class="pomodoro-header">
+            <div class="card-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>番茄钟</span></div>
+            <div class="pomo-settings"><label>专注 <input type="number" id="pomo-focus" value="25" min="1"> min</label><label>休息 <input type="number" id="pomo-break" value="5" min="1"> min</label></div>
+          </div>
+          <div class="timer-area">
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-label" id="timer-label">准备开始</div>
+            <div class="timer-controls">
+              <button class="btn-start" id="start-pomo">开始</button>
+              <button class="btn-pause" id="pause-pomo" disabled>暂停</button>
+              <button class="btn-reset" id="reset-pomo">重置</button>
+            </div>
+            <div class="pomo-counter">已完成 <strong id="pomo-count">0</strong> 个番茄</div>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
+
+    <!-- ====== Notes View ====== -->
+    <div class="view" id="view-notes">
+      <section class="section">
+        <div class="card notes-card">
+          <div class="notes-header">
+            <div class="card-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg><span>笔记</span></div>
+            <div class="notes-controls"><input type="text" id="note-search" placeholder="搜索..."><button id="new-note">新建</button></div>
+          </div>
+          <div class="notes-body">
+            <div class="note-list-sidebar" id="note-list"></div>
+            <div class="note-editor">
+              <input type="text" id="note-title" placeholder="标题">
+              <div class="note-tabs"><button class="note-tab active" data-tab="edit">编辑</button><button class="note-tab" data-tab="preview">预览</button></div>
+              <textarea id="note-content" placeholder="使用 Markdown 书写..."></textarea>
+              <div class="note-preview" id="note-preview"></div>
+              <div class="note-actions"><button id="save-note">保存</button><button id="delete-note" class="btn-danger">删除</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ====== Calendar View ====== -->
+    <div class="view" id="view-calendar">
+      <section class="section">
+        <div class="card calendar-card">
+          <div class="card-header">
+            <span>📅 日历</span>
+            <div class="calendar-nav"><button id="prev-month">◀</button><span id="calendar-month-year"></span><button id="next-month">▶</button></div>
+          </div>
+          <div class="calendar-grid-wrap"><div class="calendar-header-row"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="calendar-grid" id="calendar-grid"></div></div>
+          <div class="event-area" id="event-area" style="display:none"><p>日期: <strong id="selected-date"></strong></p><div class="event-input"><input type="text" id="event-input" placeholder="添加日程..."><button id="add-event">添加</button></div><div class="event-list" id="event-list"></div></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ====== Stats View ====== -->
+    <div class="view" id="view-stats">
+      <section class="section">
+        <div class="card chart-card"><div class="card-header"><span>💧 饮水趋势</span><div class="chart-toggles"><button class="toggle-btn active" data-chart="water" data-range="week">周</button><button class="toggle-btn" data-chart="water" data-range="month">月</button></div></div><canvas id="water-chart"></canvas></div>
+        <div class="card chart-card"><div class="card-header"><span>🎯 专注趋势</span><div class="chart-toggles"><button class="toggle-btn active" data-chart="focus" data-range="week">周</button><button class="toggle-btn" data-chart="focus" data-range="month">月</button></div></div><canvas id="focus-chart"></canvas></div>
+        <div class="card chart-card"><div class="card-header"><span>🌙 睡眠趋势</span><div class="chart-toggles"><button class="toggle-btn active" data-chart="sleep" data-range="week">周</button><button class="toggle-btn" data-chart="sleep" data-range="month">月</button></div></div><canvas id="sleep-chart"></canvas></div>
+        <div class="card chart-card"><div class="card-header"><span>✅ 任务完成率</span><div class="chart-toggles"><button class="toggle-btn active" data-chart="todo" data-range="week">周</button><button class="toggle-btn" data-chart="todo" data-range="month">月</button></div></div><canvas id="todo-chart"></canvas></div>
+      </section>
+    </div>
+  </main>
 </div>
 
-<!-- 设置面板 -->
-<div class="settings-overlay" id="settings-overlay">
-  <div class="settings-panel">
-    <div class="settings-header">
-      <h3>⚙️ 设置</h3>
-      <button class="close-settings" id="close-settings">✕</button>
-    </div>
-    <div class="settings-content">
-      <div class="setting-group">
-        <h4>主题</h4>
-        <div class="setting-options">
-          <label><input type="radio" name="theme" value="dark"> 深色模式</label>
-          <label><input type="radio" name="theme" value="light"> 浅色模式</label>
-          <label><input type="radio" name="theme" value="auto" checked> 跟随系统</label>
-        </div>
-      </div>
-      <div class="setting-group">
-        <h4>主色调</h4>
-        <div class="color-options" id="color-options">
-          <div class="color-swatch active" data-color="purple" style="background:linear-gradient(135deg,#a78bfa,#60a5fa)"></div>
-          <div class="color-swatch" data-color="blue" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)"></div>
-          <div class="color-swatch" data-color="green" style="background:linear-gradient(135deg,#34d399,#10b981)"></div>
-          <div class="color-swatch" data-color="orange" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)"></div>
-          <div class="color-swatch" data-color="pink" style="background:linear-gradient(135deg,#f472b6,#ec4899)"></div>
-        </div>
-      </div>
-      <div class="setting-group">
-        <h4>字体大小</h4>
-        <div class="setting-slider">
-          <span>小</span>
-          <input type="range" id="font-size-slider" min="12" max="20" value="14">
-          <span>大</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settings-overlay"><div class="modal"><div class="modal-header"><h3>设置</h3><button class="modal-close" id="close-settings">✕</button></div><div class="modal-body"><div class="setting-group"><h4>主题</h4><div class="radio-group"><label><input type="radio" name="theme" value="dark"> 深色</label><label><input type="radio" name="theme" value="light"> 浅色</label><label><input type="radio" name="theme" value="auto" checked> 自动</label></div></div><div class="setting-group"><h4> Accent</h4><div class="color-swatches" id="color-options"><div class="swatch active" data-color="purple" style="background:#a78bfa"></div><div class="swatch" data-color="blue" style="background:#60a5fa"></div><div class="swatch" data-color="green" style="background:#34d399"></div><div class="swatch" data-color="orange" style="background:#fbbf24"></div><div class="swatch" data-color="pink" style="background:#f472b6"></div></div></div><div class="setting-group"><h4>字体大小</h4><div class="slider-wrap"><input type="range" id="font-size-slider" min="12" max="18" value="14"></div></div></div></div></div>
 
 <script src="app.js"></script>
 </body>
